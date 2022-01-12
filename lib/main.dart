@@ -14,8 +14,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Book List',
       theme: ThemeData(
-          primarySwatch: Colors.red,
-          scaffoldBackgroundColor: const Color(0xFFFF5E00)),
+          primarySwatch: Colors.brown,
+          scaffoldBackgroundColor: const Color(0xFFFFFFFF)),
       home: const MyHomePage(title: 'Flutter Book List'),
     );
   }
@@ -33,6 +33,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   TextEditingController titleController = TextEditingController();
   TextEditingController descController = TextEditingController();
+  TextEditingController authorController = TextEditingController();
+  TextEditingController yearController = TextEditingController();
 
   @override
   void initState() {
@@ -59,10 +61,35 @@ class _MyHomePageState extends State<MyHomePage> {
       body: ListView.builder(
           itemCount: books.length,
           itemBuilder: (context, index) => Card(
+                color: Colors.brown,
                 margin: const EdgeInsets.all(15),
                 child: ListTile(
-                  title: Text(books[index]['title']),
-                  subtitle: Text(books[index]['desc']),
+                  isThreeLine: true,
+                  title: Text(books[index]['title'],
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          // height: 5,
+                          fontSize: 20,
+                          color: Color(0xFFFFFFFF))),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("by. " + books[index]['author'],
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                              color: Color(0xFFFFFFFF))),
+                      Text(books[index]['year'],
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              height: 2,
+                              color: Color(0xFFFFFFFF))),
+                      Text(
+                        books[index]['desc'],
+                        style: TextStyle(color: Color(0xFFFFFFFF)),
+                      ),
+                    ],
+                  ),
                   trailing: SizedBox(
                     width: 100,
                     child: Row(
@@ -89,13 +116,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
   //Function -> Add
   Future<void> addBook() async {
-    await SQLHelper.addBook(titleController.text, descController.text);
+    await SQLHelper.addBook(titleController.text, authorController.text,
+        yearController.text, descController.text);
     refreshBooks();
   }
 
   // Function -> Update
   Future<void> updateBooks(int id) async {
-    await SQLHelper.updateBooks(id, titleController.text, descController.text);
+    await SQLHelper.updateBooks(id, titleController.text, authorController.text,
+        yearController.text, descController.text);
     refreshBooks();
   }
 
@@ -112,6 +141,8 @@ class _MyHomePageState extends State<MyHomePage> {
     if (id != null) {
       final dataBooks = books.firstWhere((element) => element['id'] == id);
       titleController.text = dataBooks['title'];
+      authorController.text = dataBooks['author'];
+      yearController.text = dataBooks['year'];
       descController.text = dataBooks['desc'];
     }
 
@@ -134,6 +165,14 @@ class _MyHomePageState extends State<MyHomePage> {
                       height: 10,
                     ),
                     TextField(
+                      controller: authorController,
+                      decoration: const InputDecoration(hintText: 'Author'),
+                    ),
+                    TextField(
+                      controller: yearController,
+                      decoration: const InputDecoration(hintText: 'Year'),
+                    ),
+                    TextField(
                       controller: descController,
                       decoration: const InputDecoration(hintText: 'Desc'),
                     ),
@@ -150,6 +189,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
                           // await addBook();
                           titleController.text = '';
+                          authorController.text = '';
+                          yearController.text = '';
                           descController.text = '';
                           Navigator.pop(context);
                         },
