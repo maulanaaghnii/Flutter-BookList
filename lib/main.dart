@@ -96,10 +96,16 @@ class _MyHomePageState extends State<MyHomePage> {
                       children: [
                         IconButton(
                             onPressed: () => modalForm(books[index]['id']),
-                            icon: const Icon(Icons.edit)),
+                            icon: const Icon(
+                              Icons.edit,
+                              color: Colors.white,
+                            )),
                         IconButton(
                             onPressed: () => deleteBook(books[index]['id']),
-                            icon: const Icon(Icons.delete))
+                            icon: const Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                            ))
                       ],
                     ),
                   ),
